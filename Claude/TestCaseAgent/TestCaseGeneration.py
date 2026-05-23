@@ -5,13 +5,15 @@ from dotenv import load_dotenv
 # Load environment variables from the .env file
 load_dotenv()
 
-def generate_gherkin_tests(user_story: str) -> str:
+# Change the function to accept api_key
+def generate_gherkin_tests(user_story: str, api_key: str = None) -> str:
     """
     Sends a raw user story to Claude and receives structured Gherkin test scenarios.
     """
-    # 1. Initialize the official Anthropic client
-    # It automatically looks for the 'ANTHROPIC_API_KEY' environment variable.
-    client = Anthropic()
+    # Initialize the client by explicitly forcing the passed key
+    import os
+    final_key = api_key or os.getenv("ANTHROPIC_API_KEY")
+    client = Anthropic(api_key=final_key)
 
     # 2. Define the exact, hyper-focused QA System Prompt
     system_prompt = """
