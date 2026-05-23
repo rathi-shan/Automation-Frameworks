@@ -15,3 +15,7 @@ build/
 .vscode/ 
 test-output/ 
 playwright-report/ 
+
+# Block all environment files across all subdirectories
+**/.env
+.env
