@@ -40,13 +40,40 @@ jobs:
         run: npx playwright install --with-deps
       
       - name: Run Playwright tests
-        run: npx playwright test PROD-742.spec.ts coupon_validation.spec.ts --reporter=list
+        run: npx playwright test PROD-742.spec.ts coupon_validation.spec.ts --reporter=html,json
         continue-on-error: true
       
-      - name: Upload test results
+      - name: Generate Email Report
+        if: always()
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+        run: python email_reporter.py
+      
+      - name: Upload HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ matrix.node-version }}
           path: playwright-report/
           retention-days: 30
+      
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.node-version }}
+          path: test-results/
+          retention-days: 30
+      
+      - name: Publish Test Report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Playwright Test Results (${{ matrix.node-version }})
+          path: 'test-results/results.json'
+          reporter: 'java-junit'
+          fail-on-error: false

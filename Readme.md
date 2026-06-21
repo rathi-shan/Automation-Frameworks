@@ -15,3 +15,9 @@ Here is how that exact enterprise pipeline is built:
          │  (Parses Gherkin and writes actual TypeScript/Python Playwright code)
          ▼
 [ Automated PR / Code Commit ] ──> Pushes code to GitHub/GitLab repository
+         │
+         ▼
+[ GitHub Actions CI/CD Pipeline ] ──> Runs tests & Generates Reports
+         │
+         ▼
+[ Email Notifications ] ──> Sends HTML report with results
