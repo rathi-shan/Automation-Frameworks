@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="RegressionSuite">
+    <test name="LoginTests">
+        <classes>
+            <class name="LoginTestNG" />
+        </classes>
+    </test>
+</suite>

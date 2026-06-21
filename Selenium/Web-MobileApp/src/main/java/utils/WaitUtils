@@ -1,0 +1,38 @@
+public class WaitUtils {
+
+    WebDriver driver;
+
+    public WaitUtils(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    public WebElement waitForVisibility(By locator, int timeout) {
+
+        WebDriverWait wait =
+                new WebDriverWait(driver, Duration.ofSeconds(timeout));
+
+        return wait.until(
+                ExpectedConditions.visibilityOfElementLocated(locator)
+        );
+    }
+
+    public WebElement waitForClickable(By locator, int timeout) {
+
+        WebDriverWait wait =
+                new WebDriverWait(driver, Duration.ofSeconds(timeout));
+
+        return wait.until(
+                ExpectedConditions.elementToBeClickable(locator)
+        );
+    }
+
+    public WebElement waitForPresence(By locator, int timeout) {
+
+        WebDriverWait wait =
+                new WebDriverWait(driver, Duration.ofSeconds(timeout));
+
+        return wait.until(
+                ExpectedConditions.presenceOfElementLocated(locator)
+        );
+    }
+}

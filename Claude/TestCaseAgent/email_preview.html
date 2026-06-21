@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Execution Report - Email Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .email-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header .status {
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .content {
+            padding: 30px 25px;
+        }
+        
+        .info-box {
+            background-color: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #1565c0;
+        }
+        
+        .info-box p {
+            margin: 5px 0;
+        }
+        
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-item {
+            background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 5px solid #007bff;
+            transition: transform 0.3s ease;
+        }
+        
+        .summary-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .summary-item.passed {
+            border-left-color: #28a745;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        }
+        
+        .summary-item.failed {
+            border-left-color: #dc3545;
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        }
+        
+        .summary-item.skipped {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        }
+        
+        .summary-item.total {
+            border-left-color: #007bff;
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+        }
+        
+        .summary-item h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            opacity: 0.7;
+            font-weight: 600;
+        }
+        
+        .summary-item .number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .details {
+            margin: 30px 0;
+        }
+        
+        .details h2 {
+            font-size: 20px;
+            color: #333;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 70px;
+        }
+        
+        .badge.pass {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .badge.fail {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .badge.skip {
+            background-color: #ffc107;
+            color: #333;
+        }
+        
+        .test-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .suite-name {
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .duration {
+            text-align: right;
+            color: #666;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .attachment-info {
+            background: #f0f4f8;
+            border: 2px dashed #2196F3;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-size: 13px;
+        }
+        
+        .attachment-info strong {
+            color: #2196F3;
+        }
+        
+        .note {
+            background: #fffbea;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #856404;
+        }
+        
+        @media (max-width: 600px) {
+            .summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            td, th {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- HEADER SECTION -->
+        <div class="header">
+            <h1>🧪 Test Execution Report</h1>
+            <div class="status">
+                Status: <strong>PASSED</strong>
+                <div class="status-badge">✓ All Systems Operational</div>
+            </div>
+        </div>
+        
+        <!-- CONTENT SECTION -->
+        <div class="content">
+            <!-- INFO BOX -->
+            <div class="info-box">
+                <p><strong>Timestamp:</strong> 2026-06-21 15:35:00 UTC</p>
+                <p><strong>Repository:</strong> rathi-shan/Automation-Frameworks</p>
+                <p><strong>Branch:</strong> main</p>
+                <p><strong>Commit:</strong> 2b2bb48 - Trigger pipeline with email notification system</p>
+            </div>
+            
+            <!-- SUMMARY STATISTICS -->
+            <div class="summary">
+                <div class="summary-item passed">
+                    <h3>Passed</h3>
+                    <div class="number">18</div>
+                </div>
+                
+                <div class="summary-item failed">
+                    <h3>Failed</h3>
+                    <div class="number">2</div>
+                </div>
+                
+                <div class="summary-item skipped">
+                    <h3>Skipped</h3>
+                    <div class="number">3</div>
+                </div>
+                
+                <div class="summary-item total">
+                    <h3>Total</h3>
+                    <div class="number">23</div>
+                </div>
+            </div>
+            
+            <!-- DETAILS SECTION -->
+            <div class="details">
+                <h2>📋 Test Results</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Suite</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="test-name">Successful FaceID login on first attempt</td>
+                            <td class="suite-name">PROD-742</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.45s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Successful FaceID login on second attempt</td>
+                            <td class="suite-name">PROD-742</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.12s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Administrator successfully unlocks account</td>
+                            <td class="suite-name">PROD-742</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">3.89s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Account lockout expires automatically</td>
+                            <td class="suite-name">PROD-742</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.67s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Warning push notification on 2nd attempt</td>
+                            <td class="suite-name">PROD-742</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.34s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Account locked on 3rd failed attempt</td>
+                            <td class="suite-name">PROD-742</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.89s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Account remains locked before expiry</td>
+                            <td class="suite-name">PROD-742</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">1.56s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">No notification on 1st failed attempt</td>
+                            <td class="suite-name">PROD-742</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.23s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Premium user applies PREMIUM15 coupon</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">3.12s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Coupon applies at minimum threshold</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.78s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Mixed cart discount validation</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.91s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Guest user denied PREMIUM15 coupon</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge fail">FAIL ✗</span></td>
+                            <td class="duration">1.89s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Standard user denied PREMIUM15</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.45s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Coupon denied below minimum</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge skip">SKIP ⊘</span></td>
+                            <td class="duration">0.00s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Invalid coupon rejection</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge skip">SKIP ⊘</span></td>
+                            <td class="duration">0.00s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Expired coupon handling</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge fail">FAIL ✗</span></td>
+                            <td class="duration">1.67s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Coupon usage limit enforcement</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">3.24s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Multiple coupons application</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.56s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Coupon code case sensitivity</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge skip">SKIP ⊘</span></td>
+                            <td class="duration">0.00s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Coupon applies to correct items</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.33s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Discount calculation accuracy</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">1.98s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Tax calculation after discount</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.14s</td>
+                        </tr>
+                        <tr>
+                            <td class="test-name">Final order total validation</td>
+                            <td class="suite-name">Coupons</td>
+                            <td><span class="badge pass">PASS ✓</span></td>
+                            <td class="duration">2.07s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- ATTACHMENT INFO -->
+            <div class="attachment-info">
+                <strong>📎 Attachment Included:</strong><br>
+                <strong>index.html</strong> - Full Playwright HTML Report
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li>Interactive test results view</li>
+                    <li>Screenshots on test failure</li>
+                    <li>Video recordings (if enabled)</li>
+                    <li>Trace files for debugging</li>
+                    <li>Detailed error messages</li>
+                    <li>Timeline and performance metrics</li>
+                </ul>
+            </div>
+            
+            <!-- NOTE -->
+            <div class="note">
+                <strong>Note:</strong> This is an automated test report. The attached <strong>index.html</strong> contains the full Playwright HTML report with screenshots, videos, and detailed debugging information. Open it in any web browser to view interactive test results.
+            </div>
+            
+            <!-- FOOTER -->
+            <div class="footer">
+                <p>This is an automated test report generated by the Test Automation Pipeline.</p>
+                <p>Please do not reply to this email.</p>
+                <p>For issues or questions, contact: qa-team@company.com</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

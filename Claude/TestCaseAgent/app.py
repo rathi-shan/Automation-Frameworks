@@ -5,6 +5,7 @@ from pydantic import BaseModel
 import uvicorn
 from dotenv import load_dotenv
 from anthropic import Anthropic
+from git import Repo  # 👈 Added for automated Git control
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(script_dir, ".env")
@@ -14,7 +15,6 @@ MASTER_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 from TestCaseGeneration import generate_gherkin_tests
 from GherkinToPlaywright import translate_gherkin_to_playwright
-from GitAutomation import push_to_git_repository
 
 app = FastAPI(title="Self-Healing AI QE Pipeline")
 
@@ -22,6 +22,37 @@ class JiraWebhookPayload(BaseModel):
     issue_key: str
     summary: str
     description: str
+
+def push_to_git_repository(issue_key: str, feature_file: str, spec_file: str):
+    """
+    Automates Git staging, branching, and committing.
+    """
+    print(f"📦 [Git Agent] Preparing to commit automation assets for {issue_key}...")
+    try:
+        # Open the local Git repository located in your project directory
+        repo = Repo(script_dir)
+        
+        # 1. Check if we are dirty or if files exist to prevent tracking issues
+        if not os.path.exists(feature_file) or not os.path.exists(spec_file):
+            print("❌ Git upload skipped: Missing files.")
+            return
+
+        # 2. Add the files to staging area
+        repo.index.add([feature_file, spec_file])
+        
+        # 3. Commit the changes with a clean message tracking the Jira ticket
+        commit_message = f"chore(automation): auto-generated test suite for {issue_key} [skip ci]"
+        repo.index.commit(commit_message)
+        print(f"🗄️ Locally committed {feature_file} and {spec_file}!")
+        
+        # 4. Optional Remote Push (Uncomment and replace 'origin' if connected to a real GitHub repo)
+        # origin = repo.remote(name='origin')
+        # origin.push()
+        print("🚀 [Git Agent] Changes successfully locked into repository history.")
+
+    except Exception as git_err:
+        print(f"⚠️ Git automation encountered an error (Check if directory is initialized via 'git init'): {git_err}")
+
 
 def heal_broken_code(broken_code: str, error_log: str, api_key: str) -> str:
     print("🩹 [Agent 3] Initiating AI Self-Healing sequence...")

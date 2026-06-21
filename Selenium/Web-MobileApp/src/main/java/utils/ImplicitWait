@@ -1,0 +1,5 @@
+
+public ImplicitWait(WebDriver driver, int timeout) {
+        this.driver = driver;
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(timeout));
+    }

@@ -2,11 +2,11 @@ package stepDefinitions;
 
 import api.SportsAPI;
 import org.openqa.selenium.WebDriver;
-import pages.LoginPage;
+import pages.LoginPageSample;
 
 public class FollowSportsSteps {
     WebDriver driver = new ChromeDriver();
-    LoginPage loginPage = new LogingPage(driver);
+    LoginPageSample loginPage = new LogingPage(driver);
 
     @Given ("the user is logged into the CBC News app")
     public void the_user_is_logged_in() {

@@ -1,15 +1,21 @@
-# Secrets and Environment Configs
+.env.env 
+node_modules/ 
+target/ 
+.gradle/ 
+build/ 
+.idea/ 
+.vscode/ 
+test-output/ 
+playwright-report/ 
+node_modules/ 
+target/ 
+.gradle/ 
+build/ 
+.idea/ 
+.vscode/ 
+test-output/ 
+playwright-report/ 
+
+# Block all environment files across all subdirectories
+**/.env
 .env
-.env.*
-
-# Python compilation files
-__pycache__/
-*.pyc
-
-# Node dependencies and test runner results
-node_modules/
-package-lock.json
-test-results/
-playwright-report/
-blob-report/
-playwright/.cache/

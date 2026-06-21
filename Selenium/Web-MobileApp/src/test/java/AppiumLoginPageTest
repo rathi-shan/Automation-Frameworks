@@ -1,0 +1,89 @@
+package tests;
+
+import java.net.URL;
+
+import org.testng.Assert;
+import org.testng.annotations.*;
+
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
+
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import pages.LoginPage;
+
+public class MobileLoginTest {
+
+    AppiumDriver driver;
+
+    @BeforeMethod
+    public void setup() throws Exception {
+
+        String platform = "Android";
+
+        DesiredCapabilities caps =
+                new DesiredCapabilities();
+
+        if(platform.equalsIgnoreCase(
+                "Android")) {
+
+            caps.setCapability(
+                "platformName",
+                "Android");
+
+            caps.setCapability(
+                "deviceName",
+                "Pixel");
+
+            driver =
+                new AndroidDriver(
+                    new URL(
+                    "http://127.0.0.1:4723"),
+                    caps);
+
+        } else {
+
+            caps.setCapability(
+                "platformName",
+                "iOS");
+
+            caps.setCapability(
+                "deviceName",
+                "iPhone");
+
+            driver =
+                new IOSDriver(
+                    new URL(
+                    "http://127.0.0.1:4723"),
+                    caps);
+        }
+    }
+
+    @Test
+    public void verifyLogin() {
+
+        LoginPage loginPage =
+            new LoginPage(driver);
+
+        loginPage.login(
+            "testuser",
+            "password123");
+
+        String pageTitle =
+            driver.findElement(
+                AppiumBy.accessibilityId(
+                    "homeTitle"))
+                .getText();
+
+        Assert.assertEquals(
+            pageTitle,
+            "Home");
+    }
+
+    @AfterMethod
+    public void tearDown() {
+
+        driver.quit();
+    }
+}
