@@ -2,19 +2,6 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Apply PREMIUM15 Discount Coupon at Checkout', () => {
 
-  test.beforeAll(async ({ browser }) => {
-    // Check if the app is running
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    page.on('console', () => {}); // Suppress console messages
-    try {
-      await page.goto('/', { timeout: 5000 });
-    } catch (error) {
-      test.skip(true, 'Application server not running - skipping integration tests');
-    }
-    await context.close();
-  });
-
   // Background steps helper
   async function ensureAppRunning(page: any) {
     await page.goto('/');
