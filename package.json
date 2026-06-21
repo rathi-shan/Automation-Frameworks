@@ -1,0 +1,17 @@
+{
+  "name": "testcaseagent",
+  "version": "1.0.0",
+  "description": "Fully automated test generation the moment a Jira story pops up—you need an asynchronous event-driven architecture.",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "start-server": "python test-server.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  }
+}

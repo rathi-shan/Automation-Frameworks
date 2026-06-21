@@ -1,0 +1,13 @@
+Test Trigger: 2026-06-21 15:24:07
+
+This file triggers the GitHub Actions pipeline to test the email notification system.
+
+Email Configuration:
+- SENDER_EMAIL: rathi-sender@gmail.com
+- RECIPIENT_EMAIL: rathi.shan@gmail.com
+- SMTP_HOST: smtp.gmail.com
+
+The pipeline will:
+1. Run all Playwright tests
+2. Generate HTML and JSON reports
+3. Send email with results attached
